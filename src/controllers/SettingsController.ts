@@ -1,29 +1,24 @@
-import { getCustomRepository } from "typeorm";
-import { SettingsRepository } from "../repositories/SettingsRepository" 
-import { Request, Response } from 'express'
+import { Request, Response } from 'express';
+import { SettingsServices } from '../services/SettingsService';
 
 class SettingsController{
   
   async CreateSettings (req : Request,res : Response) {
-    const repo = getCustomRepository(SettingsRepository);
+    
     const {chat, username} =  req.body;
-    const settings = repo.create({
-      chat,
-      username 
-    });
-  
-    await repo.save(settings);
+    const service = new SettingsServices();
+    const settings = await service.Create({chat, username});
   
     return res.json(settings);  
   }
 
   async DeleteSettings(req : Request, res : Response){
-    const repo = getCustomRepository(SettingsRepository);
-    const { name } =  req.params;
+    
+    const { username } =  req.params;
     try{
-      let settingsDel = await repo.findOne({ username: name});
-      await repo.remove(settingsDel);
-      return res.json("Deleted_user:" + name);  
+      const service = new SettingsServices();
+      service.Delete(username);
+      return res.json("Deleted_user:" + username);  
     }
     catch(e){
       return res.json("Error: " + e.message);
