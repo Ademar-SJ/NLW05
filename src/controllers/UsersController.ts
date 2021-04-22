@@ -5,19 +5,16 @@ class UsersController {
 
   private usersServices : UsersServices;
 
-  async CreateUser (req : Request,res : Response){   
-    
-    const { email }  = req.body;
+  async CreateUser (req : Request,res : Response) : Promise<Response>{   
+    const { email } = req.body;
 
-    const user = await this.usersServices.Create({ email });
-    res.json(user);
-  }
+    const usersServices = new UsersServices();
 
-  constructor() {
-    if (!this.usersServices){
-      this.usersServices = new UsersServices();
-    }
+    const user = await usersServices.Create({ email });
+
+    return res.json(user);
   }
+  
 }
 
 export { UsersController }

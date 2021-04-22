@@ -1,6 +1,6 @@
 require('dotenv').config();
-import express, { urlencoded } from 'express';
 import './database'; //Já executa o index.ts e sobe a conexão
+import express, { urlencoded } from 'express';
 import routes from './routes';
 //TypeScritp funciona com ES6 e necessita de ts-node-dev e @types/express
 //ts-node-dev funciona com live reload
