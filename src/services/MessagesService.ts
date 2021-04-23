@@ -20,6 +20,16 @@ class MessagesService {
     return message;
   }
 
+  async listByUser( user_id  : string) {
+    //Trazendo também informações do usuário
+    const list = await this.messagesRepository.find({
+      where: { user_id },
+      relations: ['user'],
+    });
+
+    return list;
+  }
+
   constructor(){
     if (!this.messagesRepository){
       this.messagesRepository = getCustomRepository(MessagesRepository);
