@@ -27,6 +27,12 @@ class UsersServices {
     return newUser;
   }
 
+  async List() {
+    const users = await this.usersRepository.find({});
+
+    return users;
+  }
+
 
   constructor(){
     if (!this.usersRepository) {

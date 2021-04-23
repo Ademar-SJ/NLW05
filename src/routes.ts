@@ -13,9 +13,10 @@ routes.post("/settings", settingsController.CreateSettings);
 routes.delete("/settings/:username",settingsController.DeleteSettings);
 
 routes.post("/users", usersController.CreateUser);
+routes.get("/users", usersController.ListUsers);
 
 routes.post('/messages', messagesController.CreateMessage);
-routes.post('/messages/:id', messagesController.FindByUser);
+routes.get('/messages/:user_id', messagesController.FindByUser);
 
 
 export default routes;
