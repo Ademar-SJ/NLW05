@@ -3,7 +3,7 @@ import { Entity,Column,PrimaryColumn,CreateDateColumn,UpdateDateColumn,
 import { v4 as uuid } from 'uuid';
 import { User } from '../entities/User';
 
-@Entity("conections")
+@Entity("connections")
 class Connection {
 
   @PrimaryColumn()

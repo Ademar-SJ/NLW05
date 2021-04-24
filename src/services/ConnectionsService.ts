@@ -1,5 +1,4 @@
 import { getCustomRepository } from 'typeorm';
-
 import { ConnectionsRepository } from '../repositories/ConnectionsRepository';
 
 interface IConnectionCreate {
@@ -17,7 +16,7 @@ class ConnectionsService {
       socket_id,
       user_id,
       admin_id,
-      id,
+      id, 
     });
 
     await this.connectionsRepository.save(connection);

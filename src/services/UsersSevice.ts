@@ -7,7 +7,7 @@ interface IUsersServices{
   email : string;
 }
 
-class UsersServices {
+class UsersService {
 
   private usersRepository : Repository<User>;
 
@@ -33,6 +33,11 @@ class UsersServices {
     return users;
   }
 
+  async FindByEmail({ email }){
+    const user = await this.usersRepository.findOne({ email });
+
+    return user;
+  }
 
   constructor(){
     if (!this.usersRepository) {
@@ -42,4 +47,4 @@ class UsersServices {
 
 }
 
-export { UsersServices };
+export { UsersService };

@@ -32,6 +32,15 @@ class SettingsServices {
     }
   }
 
+  async FindByUsername(username : string){
+    try{
+      let settings = await this.settingsRepository.findOne({ username });
+      return settings;
+    }catch(err){
+      throw err;
+    }
+  }
+
   constructor(){
     if (!this.settingsRepository){
       this.settingsRepository = getCustomRepository(SettingsRepository);

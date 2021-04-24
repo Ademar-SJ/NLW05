@@ -10,6 +10,7 @@ const messagesController = new MessagesController();
 const routes = Router();
 
 routes.post("/settings", settingsController.CreateSettings);
+routes.get("/settings/:username",settingsController.FindByUsername);
 routes.delete("/settings/:username",settingsController.DeleteSettings);
 
 routes.post("/users", usersController.CreateUser);
