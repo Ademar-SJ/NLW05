@@ -29,5 +29,8 @@ app.set('engine','html');
 app.get('/', (req : Request,res : Response) => {
   return res.render("html/client.html");
 });
+app.get('/admin', (req : Request,res : Response) => {
+  return res.render("html/admin.html");
+});
 
 export { http, io }

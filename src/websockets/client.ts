@@ -6,12 +6,12 @@ import { MessagesService } from '../services/MessagesService';
 
 
 io.on('connect', (socket : Socket) => {
+  const connectionsService = new ConnectionsService();
+  const usersService = new UsersService();
+  const messageService = new MessagesService();
+
   socket.on('client_first_access', async (params) => {
-    
     const { email , msg } = params;
-    const connectionsService = new ConnectionsService();
-    const usersService = new UsersService();
-    const messageService = new MessagesService();
 
     let user_id;
     const userExists = await usersService.FindByEmail({email});
@@ -34,6 +34,33 @@ io.on('connect', (socket : Socket) => {
       });
     }
 
-    await messageService.Create({admin_id: '',user_id, text: msg});
+    await messageService.Create({user_id, text: msg});
+
+    //Trazer as mensagens anteriores para o chat
+    const allMessages = await messageService.listByUser(user_id);
+
+    socket.emit('client_list_allmessages', allMessages);
+
+    const allUsers = await connectionsService.findPendingConnections();
+    io.emit('admin_list_all_users', allUsers);
+
   })
+
+  socket.on('client_send_to_admin', async (params) => {    
+
+    const { text, socket_id_admin } = params;
+    const socket_id_client  = socket.id;
+    const { user_id } = await connectionsService.findBySocketId(socket_id_client);
+
+    const message = await messageService.Create({
+      text,
+      user_id,
+    });
+
+    io.to(socket_id_admin).emit('admin_receive_message',{
+      message,
+      socket_id_client
+    });
+  })
+
 });
