@@ -325,6 +325,11 @@ input[type="text"]:focus {
 
 .admin_date {
   font-size: 10px;
+  color: #000;
+}
+
+.client_date {
+  font-size: 10px;
   color: #fff;
 }
 

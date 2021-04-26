@@ -5,7 +5,6 @@ let pendingConnections = [];
 let connectionInSupport = [];
 
 socket.on('admin_list_all_users', (connections) => {
-  
   pendingConnections = connections;
   document.getElementById('list_users').innerHTML = '';
   const template = document.getElementById('template').innerHTML;
@@ -19,7 +18,6 @@ socket.on('admin_list_all_users', (connections) => {
 
   })
 });
-
 
 function call(id){
   const connection = pendingConnections.find(connection => connection.socket_id === id);
@@ -40,26 +38,15 @@ function call(id){
     );
 
     messages.forEach((message) => {
-      const createDiv = document.createElement("div");
 
+      let div;
       if (message.admin_id === null) {
-        createDiv.className = "admin_message_client";
-
-        createDiv.innerHTML = `<span>${connection.user.email} </span>`;
-        createDiv.innerHTML += `<span>${message.text}</span>`;
-        createDiv.innerHTML += `<span class="admin_date">${dayjs(
-          message.created_at
-        ).format("DD/MM/YYYY HH:mm:ss")}</span>`;
+        div = createAdminMsgClient(connection.user.email,message.text,message.created_at);
       } else {
-        createDiv.className = "admin_message_admin";
-
-        createDiv.innerHTML = `Atendente: <span>${message.text}</span>`;
-        createDiv.innerHTML += `<span class="admin_date>${dayjs(
-          message.created_at
-        ).format("DD/MM/YYYY HH:mm:ss")}`;
+        div = createAdminMsgAdmin(message.text,message.created_at);        
       }
 
-      divMessages.appendChild(createDiv);
+      divMessages.appendChild(div);
     });
 
   });
@@ -75,45 +62,51 @@ function sendMessage(id) {
   };
 
   socket.emit("admin_send_message", params);
-
   const divMessages = document.getElementById(`allMessages${id}`);
+  const div = createAdminMsgAdmin(params.text);
 
-  const createDiv = document.createElement("div");
-  createDiv.className = "admin_message_admin";
-  createDiv.innerHTML = `Atendente: <span>${params.text}</span>`;
-  createDiv.innerHTML += `<span class="admin_date>${dayjs().format(
-    "DD/MM/YYYY HH:mm:ss"
-  )}`;
-
-  divMessages.appendChild(createDiv);
+  divMessages.appendChild(div);
 
   text.value = "";
 }
 
-socket.on("admin_receive_message", (data) => {
+socket.on("admin_receive_message", ({ message, socket_id_client } ) => {
+  const { user_id,user } = connectionInSupport.find(
+    (connec) => (connec.socket_id === socket_id_client)
+    );
   
-  console.log('Recebi a mensagem');
-  console.log(data);
-  console.log('Valro do connection vai ser mostrado abaixo');
-  const connection = connectionInSupport.find(
-    (connec) => (connec.socket_id === data.socket_id_client)
-    );
-    
-    console.log('Valro do connection', connection);
-
-    
-  const divMessages = document.getElementById(
-    `allMessages${connection.user_id}`
-    );
+  const divMessages = document.getElementById(`allMessages${user_id}`);
       
-  const createDiv = document.createElement("div");
+  const msgAdminClient = createAdminMsgClient(
+      user.email,message.text,message.created_at);
 
-  createDiv.className = "admin_message_client";
-  createDiv.innerHTML = `<span>${connection.user.email} </span>`;
-  createDiv.innerHTML += `<span>${data.message.text}</span>`;
-  createDiv.innerHTML += `<span class="admin_date">${dayjs(
-    data.message.created_at
+  divMessages.appendChild(msgAdminClient);
+});
+
+
+function createAdminMsgClient(email,text,date = new Date()){
+  const div = document.createElement("div");
+
+  div.className = "admin_message_client";
+  div.innerHTML = `<span>${email} </span>`;
+  div.innerHTML += `<span>${text}</span>`;
+  div.innerHTML += `<span class="client_date">${dayjs(
+    date
   ).format("DD/MM/YYYY HH:mm:ss")}</span>`;
 
-  divMessages.appendChild(createDiv);
-});
+  return div;
+}
+
+function createAdminMsgAdmin(text,date = new Date()){
+  const div = document.createElement("div");
+
+  div.className = "admin_message_admin";
+
+  console.log(date);
+  div.innerHTML = `Atendente: <span>${text}</span>`;
+  div.innerHTML += `<span class="admin_date">${dayjs(
+    date
+  ).format("DD/MM/YYYY HH:mm:ss")}<span/>`;
+
+  return div;
+}
